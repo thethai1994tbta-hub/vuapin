@@ -612,20 +612,6 @@ def not_found(error):
 def server_error(error):
     return jsonify({'error': 'Server error'}), 500
 
-@app.route('/orders/<order_id>', methods=['PUT'])
-def update_order(order_id):
-    """Update order status and price"""
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'error': 'Dữ liệu không hợp lệ'}), 400
-        if FIREBASE_READY:
-            ref = db.reference(f'orders/{order_id}')
-            ref.update(data)
-        return jsonify({'success': True, 'message': 'Order updated'}), 200
-    except Exception as e:
-        return jsonify({'error': f'Lỗi: {str(e)}'}), 500
-
 @app.route('/orders/<order_id>', methods=['DELETE'])
 def delete_order(order_id):
     """Delete an order"""
