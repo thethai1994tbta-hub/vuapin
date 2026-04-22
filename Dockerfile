@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 COPY server.py .
 COPY index.html .
 COPY admin.html .
+COPY wsgi.py .
 
 # Create database directory
 RUN mkdir -p /app/data
