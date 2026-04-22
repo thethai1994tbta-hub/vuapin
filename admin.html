@@ -650,7 +650,7 @@
 </div>
 
 <script>
-const API_URL = 'http://127.0.0.1:5000/api/admin';
+const API_URL = '';
 let currentOrderId = null;
 let currentImageData = null;
 let currentProductId = null;
@@ -684,7 +684,7 @@ async function loadProducts() {
     document.getElementById('productsTable').innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
 
     try {
-        const response = await fetch(`${API_URL}/products`);
+        const response = await fetch('/api/products');
         const data = await response.json();
 
         if (!response.ok) {
@@ -692,7 +692,7 @@ async function loadProducts() {
             return;
         }
 
-        const products = data.products || [];
+        const products = Array.isArray(data) ? data : (data.products || []);
         productsCache = products;
         if (products.length === 0) {
             document.getElementById('productsTable').innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">Chưa có sản phẩm nào. <a href="#" onclick="openProductModal(); return false;" style="color: var(--primary); font-weight: 600;">Thêm sản phẩm</a></p>';
@@ -797,7 +797,7 @@ async function saveProduct() {
 
     try {
         const method = currentProductId ? 'PUT' : 'POST';
-        const url = currentProductId ? `${API_URL}/product/${currentProductId}` : `${API_URL}/product`;
+        const url = currentProductId ? `/api/products/${currentProductId}` : '/api/products';
 
         const response = await fetch(url, {
             method: method,
@@ -825,7 +825,7 @@ async function deleteProduct(productId) {
     if (!confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) return;
 
     try {
-        const response = await fetch(`${API_URL}/product/${productId}`, {
+        const response = await fetch(`/api/products/${productId}`, {
             method: 'DELETE'
         });
 
@@ -852,7 +852,7 @@ async function loadOrders() {
     document.getElementById('ordersTable').innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
 
     try {
-        const response = await fetch(`${API_URL}/orders`);
+        const response = await fetch('/orders');
         const data = await response.json();
 
         if (!response.ok) {
@@ -860,8 +860,16 @@ async function loadOrders() {
             return;
         }
 
+        // Support both plain array and wrapped { stats, orders } response shapes
+        const orders = Array.isArray(data) ? data : (data.orders || []);
+        const stats = data.stats || {
+            total_orders: orders.length,
+            total_revenue: orders.reduce((s, o) => s + (o.price || 0), 0),
+            completed: orders.filter(o => o.status === 'done').length,
+            pending: orders.filter(o => o.status === 'new' || o.status === 'processing').length
+        };
+
         // Display stats
-        const stats = data.stats;
         document.getElementById('statsGrid').innerHTML = `
             <div class="stat-card">
                 <div class="stat-number">${stats.total_orders}</div>
@@ -880,9 +888,6 @@ async function loadOrders() {
                 <div class="stat-label">Chưa xử lý</div>
             </div>
         `;
-
-        // Display orders
-        const orders = data.orders;
         if (orders.length === 0) {
             document.getElementById('ordersTable').innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">Chưa có đơn hàng nào</p>';
             return;
@@ -981,7 +986,7 @@ async function saveOrder() {
             body.image_data = imageData;
         }
 
-        const response = await fetch(`${API_URL}/order/${currentOrderId}`, {
+        const response = await fetch(`/orders/${currentOrderId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -1007,7 +1012,7 @@ async function deleteOrder(orderId) {
     if (!confirm('Bạn chắc chắn muốn xóa đơn hàng này?')) return;
 
     try {
-        const response = await fetch(`${API_URL}/order/${orderId}`, {
+        const response = await fetch(`/orders/${orderId}`, {
             method: 'DELETE'
         });
 
@@ -1044,7 +1049,7 @@ async function calculatePrice() {
     const extraCost = parseFloat(document.getElementById('extraCost').value);
 
     try {
-        const response = await fetch('http://127.0.0.1:5000/api/calculate-price', {
+        const response = await fetch('/api/calculate-price', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

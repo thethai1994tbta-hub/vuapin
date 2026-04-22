@@ -612,6 +612,64 @@ def not_found(error):
 def server_error(error):
     return jsonify({'error': 'Server error'}), 500
 
+@app.route('/orders/<order_id>', methods=['PUT'])
+def update_order(order_id):
+    """Update order status and price"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'Dữ liệu không hợp lệ'}), 400
+        if FIREBASE_READY:
+            ref = db.reference(f'orders/{order_id}')
+            ref.update(data)
+        return jsonify({'success': True, 'message': 'Order updated'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Lỗi: {str(e)}'}), 500
+
+@app.route('/orders/<order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    """Delete an order"""
+    try:
+        if FIREBASE_READY:
+            ref = db.reference(f'orders/{order_id}')
+            ref.delete()
+        return jsonify({'success': True, 'message': 'Order deleted'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Lỗi: {str(e)}'}), 500
+
+@app.route('/api/calculate-price', methods=['POST'])
+def calculate_price():
+    """Calculate product pricing with margins"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'Dữ liệu không hợp lệ'}), 400
+
+        total_cells = int(data.get('total_cells', 0))
+        cell_price = float(data.get('cell_price', 0))
+        bms_price = float(data.get('bms_price', 0))
+        extra_cost = float(data.get('extra_cost', 0))
+
+        material_cost = total_cells * cell_price
+        total_cost = material_cost + bms_price + extra_cost
+
+        price_low = total_cost * 1.3
+        price_mid = total_cost * 1.5
+        price_high = total_cost * 1.7
+
+        return jsonify({
+            'success': True,
+            'material_cost': round(material_cost),
+            'total_cost': round(total_cost),
+            'price_low': round(price_low),
+            'price_mid': round(price_mid),
+            'price_high': round(price_high),
+            'margin_low': round(price_low - total_cost),
+            'margin_high': round(price_high - total_cost)
+        }), 200
+    except Exception as e:
+        return jsonify({'error': f'Lỗi: {str(e)}'}), 500
+
 # ============================================================================
 # MAIN
 # ============================================================================
