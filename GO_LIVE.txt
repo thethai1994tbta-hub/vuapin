@@ -1,0 +1,108 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    VUA PIN - GO LIVE IN 5 MINUTES                           ║
+║                        HEROKU DEPLOYMENT (FREE)                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+YOUR APP IS READY TO DEPLOY ONLINE - HERE'S WHAT TO DO:
+
+STEP 1: Create Heroku Account (2 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Go to https://www.heroku.com
+Sign up (free account)
+Verify your email
+
+STEP 2: Install Heroku CLI (2 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Download: https://devcenter.heroku.com/articles/heroku-cli
+Install on your Windows machine
+Restart your terminal after installation
+
+STEP 3: Run These Commands (1 min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open Command Prompt or PowerShell and run:
+
+  heroku login
+  (This opens a browser to authenticate)
+
+  cd C:\Users\theth\pinnnn
+  heroku create your-app-name
+  (Replace "your-app-name" with something unique, like "vuapin-vn")
+
+  heroku config:set EMAIL_SENDER=your-gmail@gmail.com
+  (Your Gmail address - receiver address)
+
+  heroku config:set EMAIL_PASSWORD=your-app-password
+  (IMPORTANT: NOT your Gmail password! See note below)
+
+  heroku config:set FLASK_ENV=production
+
+  git push heroku master
+  (This deploys your app - wait for the build to finish)
+
+  heroku open
+  (Opens your live app in browser!)
+
+STEP 4: Get Your Gmail App Password (Important!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+To send order confirmation emails:
+
+1. Go to https://myaccount.google.com
+2. Click "Security" on the left
+3. Enable "2-Step Verification" if not already enabled
+4. Search for "App passwords" (below 2-Step Verification)
+5. Select "Mail" and "Windows Computer"
+6. Google generates a 16-character password
+7. Use THIS password for EMAIL_PASSWORD (not your Gmail password!)
+
+DONE! YOUR APP IS LIVE! 🚀
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your app URL will be:
+  https://your-app-name.herokuapp.com
+
+Test it:
+  - Homepage: https://your-app-name.herokuapp.com
+  - Admin: https://your-app-name.herokuapp.com/admin
+  - Calculator: Try using the battery calculator
+
+Share with customers:
+  Give them https://your-app-name.herokuapp.com
+
+TROUBLESHOOTING
+━━━━━━━━━━━━━━━
+
+If something goes wrong, run:
+  heroku logs --tail
+
+See detailed guide: HEROKU_DEPLOY.md
+
+Support: thethai1994tbta@gmail.com
+
+WHAT YOU GET (FREE)
+━━━━━━━━━━━━━━━
+✓ Live web app online 24/7
+✓ Free domain: your-app-name.herokuapp.com
+✓ Database (SQLite, works great for starting)
+✓ SSL/HTTPS included
+✓ 550 free dyno hours per month
+✓ App sleeps after 30 min of inactivity (optional: pay $5/mo to keep awake)
+
+COSTS
+━━━━━
+Free: $0/month
+Optional (to never sleep): +$5/month
+
+═══════════════════════════════════════════════════════════════════════════════
+
+QUICK LINKS:
+  - Heroku: https://www.heroku.com
+  - Heroku CLI: https://devcenter.heroku.com/articles/heroku-cli
+  - Google App Passwords: https://myaccount.google.com/apppasswords
+  - Detailed Guide: Read HEROKU_DEPLOY.md
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Your app is production-ready. Everything is set up. You're ready to deploy!
+
+Good luck! 💪
