@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pip install *)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(curl -X POST http://127.0.0.1:5000/calculate -H 'Content-Type: application/json' -d '{\"v_cell\": 3.7, \"ah_cell\": 3, \"target_voltage\": 48, \"parallel\": 10}')",
+      "Bash(curl -X POST http://127.0.0.1:5000/order -H 'Content-Type: application/json' -d '{\"name\": \"Nguyễn Văn A\", \"phone\": \"0901234567\", \"config\": \"13S10P\", \"price\": 5000000}')",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/calculate -H 'Content-Type: application/json' -d '{\"v_cell\": 3.7, \"ah_cell\": 3, \"target_voltage\": 48, \"parallel\": 10}')",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/order -H 'Content-Type: application/json' -d '{\"name\": \"Trần Minh Đức\", \"phone\": \"0938123456\", \"config\": \"13S10P\", \"note\": \"Cần giao sớm\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/calculate -H 'Content-Type: application/json' -d '{\"v_cell\": \"\", \"ah_cell\": 3, \"target_voltage\": 48, \"parallel\": 10}')",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/calculate -H 'Content-Type: application/json' -d '{\"v_cell\":3.7,\"ah_cell\":3,\"target_voltage\":48,\"parallel\":10,\"cell_type\":\"standard\"}')",
+      "Bash(curl -s http://127.0.0.1:5000/)",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/api/calculate -H 'Content-Type: application/json' -d '{\"v_cell\":3.7,\"ah_cell\":3,\"target_voltage\":48,\"parallel\":10,\"cell_type\":\"standard\"}')",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'   Config: {d[\\\\\"config\\\\\"]} | V: {d[\\\\\"voltage\\\\\"]}V | Ah: {d[\\\\\"capacity\\\\\"]}Ah | BMS: {d[\\\\\"bms_rating\\\\\"]}A'\\)\")",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/api/calculate-price -H 'Content-Type: application/json' -d '{\"total_cells\":130,\"cell_price\":50000,\"bms_price\":300000,\"extra_cost\":100000}')",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'   Cost: {d[\\\\\"total_cost\\\\\"]:,.0f}d | Price: {d[\\\\\"price_mid\\\\\"]:,.0f}d | Profit: {d[\\\\\"margin_mid\\\\\"]:,.0f}d'\\)\")",
+      "Bash(curl -s -X POST http://127.0.0.1:5000/api/order -H 'Content-Type: application/json' -d '{\"name\":\"Test User\",\"phone\":\"0901234567\",\"config\":\"13S10P\",\"voltage\":48.1,\"capacity\":30,\"energy\":1443,\"bms\":120,\"price\":5000000}')",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'   Order {d[\\\\\"order_id\\\\\"]}: {d[\\\\\"message\\\\\"]}'\\)\")",
+      "Bash(curl -s http://127.0.0.1:5000/api/admin/orders)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); s=d['stats']; print\\(f'   Total Orders: {s[\\\\\"total_orders\\\\\"]} | Revenue: {s[\\\\\"total_revenue\\\\\"]:,.0f}d | Completed: {s[\\\\\"completed\\\\\"]}'\\)\")",
+      "Bash(curl -s http://127.0.0.1:5000/admin)",
+      "Bash(sqlite3 vuapin.db \"SELECT COUNT\\(*\\) as total_orders FROM orders;\")",
+      "Bash(cat)",
+      "Read(//tmp/**)",
+      "Bash(grep -E \"\\\\.\\(db|json|html|py\\)$\")",
+      "Bash(sqlite3 \"C:\\\\Users\\\\theth\\\\pinnnn\\\\vuapin.db\" \".tables\")",
+      "Bash(sqlite3 \"C:\\\\Users\\\\theth\\\\pinnnn\\\\vuapin.db\" \"SELECT COUNT\\(*\\) as product_count FROM products; SELECT COUNT\\(*\\) as order_count FROM orders;\")",
+      "Bash(pkill -f \"python server.py\")",
+      "PowerShell(Stop-Process -Force)",
+      "PowerShell(\"Database deleted and server stopped\")",
+      "PowerShell(\"Stopped\")",
+      "Bash(chmod +x SETUP.sh)",
+      "Bash(awk '{print $9, \"\\(\" $5 \"\\)\"}')"
+    ]
+  }
+}

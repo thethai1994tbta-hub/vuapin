@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "name": "Nguy?n Van A",
+    "phone": "0901234567",
+    "config": "13S10P",
+    "price": 5000000,
+    "timestamp": "2026-04-20T23:41:54.379544"
+  },
+  {
+    "id": 2,
+    "name": "Tran Minh Duc",
+    "phone": "0938123456",
+    "config": "13S10P",
+    "note": "Can giao som",
+    "price": 0,
+    "timestamp": "2026-04-20T23:46:02.739576"
+  }
+]

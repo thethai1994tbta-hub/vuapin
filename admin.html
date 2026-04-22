@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vua Pin - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --primary-light: #14b8a6;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg-dark: #f9fafb;
+            --bg-card: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: var(--text-primary);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: var(--primary);
+            border-right: none;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar h1 {
+            font-size: 22px;
+            margin-bottom: 32px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead tr {
+            border-bottom: 2px solid var(--border);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--bg-dark);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .status.new {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .status.processing {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .status.done {
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .status.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .status.inactive {
+            background: rgba(107, 114, 128, 0.15);
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            opacity: 0.9;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+
+        .btn-cancel {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 13px;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            color: #bbf7d0;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--primary);
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .price-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .price-input-group input {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .header h2 {
+                font-size: 20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h1>⚡ Vua Pin</h1>
+    <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="loadProducts(); return false;">🛍️ Sản phẩm</a></li>
+        <li><a href="#" onclick="loadOrders(); return false;">📊 Đơn hàng</a></li>
+        <li><a href="#" onclick="showPricingTool(); return false;">💰 Tính giá</a></li>
+        <li><a href="/" target="_blank">🌐 Trang chủ</a></li>
+    </ul>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <div id="message" class="message"></div>
+
+    <!-- PRODUCTS SECTION -->
+    <div id="productsSection" style="display: none;">
+        <div class="header">
+            <h2>🛍️ Quản lý sản phẩm</h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openProductModal()">➕ Thêm sản phẩm</button>
+                <button class="btn btn-secondary" onclick="loadProducts()">Tải lại</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <div id="productsTable"></div>
+        </div>
+    </div>
+
+    <!-- ORDERS SECTION -->
+    <div id="ordersSection" style="display: none;">
+        <div class="header">
+            <h2>📊 Quản lý đơn hàng</h2>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="loadOrders()">Tải lại</button>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="table-wrapper">
+            <div id="ordersTable"></div>
+        </div>
+    </div>
+
+    <!-- PRICING TOOL SECTION -->
+    <div id="pricingSection" style="display: none;">
+        <div class="header">
+            <h2>💰 Tính giá sản phẩm</h2>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px;">
+
+            <div class="form-group">
+                <label>Số lượng tế bào</label>
+                <input id="numCells" type="number" value="130" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Giá 1 tế bào (VNĐ)</label>
+                <input id="cellPrice" type="number" value="50000" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>Giá BMS (VNĐ)</label>
+                <input id="bmsPrice" type="number" value="300000" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>Chi phí khác (VNĐ)</label>
+                <input id="extraCost" type="number" value="100000" min="0">
+            </div>
+
+            <button class="btn btn-primary" onclick="calculatePrice()" style="width: 100%;">Tính giá</button>
+
+            <div id="priceResult" style="margin-top: 24px; display: none; background: var(--bg-dark); padding: 20px; border-radius: 8px; border: 1px solid var(--border);">
+                <div style="margin-bottom: 16px;">
+                    <strong>Chi phí vật liệu:</strong>
+                    <span id="priceMatCost" style="float: right; color: var(--primary); font-weight: 700;">0đ</span>
+                </div>
+                <div style="margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                    <strong>Tổng chi phí:</strong>
+                    <span id="priceTotalCost" style="float: right; color: var(--accent); font-weight: 700; font-size: 18px;">0đ</span>
+                </div>
+
+                <div style="margin-bottom: 12px; padding: 12px; background: var(--bg-card); border-radius: 6px;">
+                    <div style="margin-bottom: 8px;">
+                        <strong>💰 Giá bán đề xuất:</strong>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span>Thấp (1.3x):</span> <span id="priceLow" style="float: right; color: #3b82f6; font-weight: 700;">0đ</span>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span>Trung bình (1.5x):</span> <span id="priceMid" style="float: right; color: var(--accent); font-weight: 700;">0đ</span>
+                    </div>
+                    <div>
+                        <span>Cao (1.7x):</span> <span id="priceHigh" style="float: right; color: #ef4444; font-weight: 700;">0đ</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: var(--bg-card); border-radius: 6px;">
+                    <strong>📈 Lợi nhuận:</strong>
+                    <div style="margin-top: 8px;">
+                        <span>Thấp:</span> <span id="profitLow" style="float: right;">0đ</span>
+                    </div>
+                    <div>
+                        <span>Cao:</span> <span id="profitHigh" style="float: right;">0đ</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <h3 id="productModalTitle">➕ Thêm sản phẩm mới</h3>
+
+        <div class="form-group">
+            <label>Tên sản phẩm *</label>
+            <input id="productName" type="text" placeholder="VD: Pin 48V 20Ah">
+        </div>
+
+        <div class="form-group">
+            <label>Mô tả *</label>
+            <input id="productDesc" type="text" placeholder="VD: Cho xe điện, xe máy điện">
+        </div>
+
+        <div class="form-group">
+            <label>Giá bán (VNĐ) *</label>
+            <input id="productPrice" type="number" value="0" min="0">
+        </div>
+
+        <div class="form-group">
+            <label>Cấu hình pin *</label>
+            <input id="productConfig" type="text" placeholder="VD: 48V 20Ah (960Wh)">
+        </div>
+
+        <div class="form-group">
+            <label>Hình ảnh (URL)</label>
+            <input id="productImage" type="text" placeholder="VD: https://example.com/image.jpg">
+        </div>
+
+        <div class="form-group">
+            <label>Trạng thái</label>
+            <select id="productStatus">
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+            </select>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-save" onclick="saveProduct()">💾 Lưu</button>
+            <button class="btn-cancel" onclick="closeProductModal()">❌ Hủy</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <h3>✏️ Chỉnh sửa đơn hàng</h3>
+
+        <div class="form-group">
+            <label>Trạng thái</label>
+            <select id="editStatus">
+                <option value="new">Mới</option>
+                <option value="processing">Đang xử lý</option>
+                <option value="done">Hoàn thành</option>
+                <option value="cancelled">Hủy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Giá bán (VNĐ)</label>
+            <input id="editPrice" type="number" value="0" min="0">
+        </div>
+
+        <div class="form-group">
+            <label>📸 Upload ảnh báo giá</label>
+            <input id="editImage" type="file" accept="image/*" onchange="previewImage()">
+            <div id="imagePreview" style="margin-top: 12px; display: none;">
+                <img id="previewImg" src="" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid var(--border);">
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">Ảnh xem trước</p>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-save" onclick="saveOrder()">💾 Lưu</button>
+            <button class="btn-cancel" onclick="closeModal()">❌ Hủy</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_URL = 'http://127.0.0.1:5000/api/admin';
+let currentOrderId = null;
+let currentImageData = null;
+let currentProductId = null;
+let productsCache = [];
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str ?? '');
+    return div.innerHTML;
+}
+
+function showMessage(message, type = 'success') {
+    const el = document.getElementById('message');
+    el.textContent = message;
+    el.className = `message ${type} show`;
+    setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function formatVND(num) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+}
+
+// PRODUCTS MANAGEMENT
+async function loadProducts() {
+    document.getElementById('productsSection').style.display = 'block';
+    document.getElementById('ordersSection').style.display = 'none';
+    document.getElementById('pricingSection').style.display = 'none';
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu a')[0].classList.add('active');
+
+    document.getElementById('productsTable').innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
+
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('Lỗi: ' + (data.error || 'Không thể tải sản phẩm'), 'error');
+            return;
+        }
+
+        const products = data.products || [];
+        productsCache = products;
+        if (products.length === 0) {
+            document.getElementById('productsTable').innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">Chưa có sản phẩm nào. <a href="#" onclick="openProductModal(); return false;" style="color: var(--primary); font-weight: 600;">Thêm sản phẩm</a></p>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Mô tả</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Cấu hình</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        products.forEach(product => {
+            const statusLabel = product.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
+            const statusClass = product.status === 'active' ? 'active' : 'inactive';
+
+            html += `
+                <tr>
+                    <td><strong>#${product.id}</strong></td>
+                    <td>${escapeHtml(product.name)}</td>
+                    <td>${escapeHtml(product.description)}</td>
+                    <td>${formatVND(product.price)}</td>
+                    <td><strong>${escapeHtml(product.config)}</strong></td>
+                    <td><span class="status ${statusClass}">${statusLabel}</span></td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn btn-edit" data-product-id="${product.id}">✏️ Sửa</button>
+                            <button class="action-btn btn-delete" onclick="deleteProduct(${product.id})">🗑️ Xóa</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        document.getElementById('productsTable').innerHTML = html;
+
+        // Event delegation for edit buttons (avoids XSS from inline onclick)
+        document.getElementById('productsTable').querySelectorAll('[data-product-id]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const p = productsCache.find(x => x.id == btn.dataset.productId);
+                if (p) editProduct(p.id, p.name, p.description, p.price, p.config, p.image_url || '', p.status);
+            });
+        });
+
+    } catch (error) {
+        showMessage('Lỗi kết nối: ' + error.message, 'error');
+        console.error(error);
+    }
+}
+
+function openProductModal() {
+    currentProductId = null;
+    document.getElementById('productModalTitle').textContent = '➕ Thêm sản phẩm mới';
+    document.getElementById('productName').value = '';
+    document.getElementById('productDesc').value = '';
+    document.getElementById('productPrice').value = '0';
+    document.getElementById('productConfig').value = '';
+    document.getElementById('productStatus').value = 'active';
+    document.getElementById('productModal').classList.add('show');
+}
+
+function editProduct(id, name, desc, price, config, image_url, status) {
+    currentProductId = id;
+    document.getElementById('productModalTitle').textContent = '✏️ Chỉnh sửa sản phẩm';
+    document.getElementById('productName').value = name;
+    document.getElementById('productDesc').value = desc;
+    document.getElementById('productPrice').value = price;
+    document.getElementById('productConfig').value = config;
+    document.getElementById('productImage').value = image_url || '';
+    document.getElementById('productStatus').value = status;
+    document.getElementById('productModal').classList.add('show');
+}
+
+function closeProductModal() {
+    document.getElementById('productModal').classList.remove('show');
+    currentProductId = null;
+}
+
+async function saveProduct() {
+    const name = document.getElementById('productName').value.trim();
+    const description = document.getElementById('productDesc').value.trim();
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const config = document.getElementById('productConfig').value.trim();
+    const image_url = document.getElementById('productImage').value.trim();
+    const status = document.getElementById('productStatus').value;
+
+    if (!name || !description || !config) {
+        showMessage('❌ Vui lòng nhập đầy đủ thông tin', 'error');
+        return;
+    }
+
+    try {
+        const method = currentProductId ? 'PUT' : 'POST';
+        const url = currentProductId ? `${API_URL}/product/${currentProductId}` : `${API_URL}/product`;
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description, price, config, image_url, status })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('Lỗi: ' + (data.error || 'Không thể lưu sản phẩm'), 'error');
+            return;
+        }
+
+        showMessage('✅ Lưu sản phẩm thành công');
+        closeProductModal();
+        loadProducts();
+
+    } catch (error) {
+        showMessage('Lỗi kết nối', 'error');
+    }
+}
+
+async function deleteProduct(productId) {
+    if (!confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/product/${productId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            showMessage('Lỗi xóa sản phẩm', 'error');
+            return;
+        }
+
+        showMessage('✅ Xóa sản phẩm thành công');
+        loadProducts();
+
+    } catch (error) {
+        showMessage('Lỗi kết nối', 'error');
+    }
+}
+
+async function loadOrders() {
+    document.getElementById('productsSection').style.display = 'none';
+    document.getElementById('ordersSection').style.display = 'block';
+    document.getElementById('pricingSection').style.display = 'none';
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu a')[1].classList.add('active');
+
+    document.getElementById('ordersTable').innerHTML = '<div class="loading"><div class="spinner"></div> Đang tải...</div>';
+
+    try {
+        const response = await fetch(`${API_URL}/orders`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('Lỗi: ' + (data.error || 'Không thể tải đơn hàng'), 'error');
+            return;
+        }
+
+        // Display stats
+        const stats = data.stats;
+        document.getElementById('statsGrid').innerHTML = `
+            <div class="stat-card">
+                <div class="stat-number">${stats.total_orders}</div>
+                <div class="stat-label">Tổng đơn hàng</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${formatVND(stats.total_revenue)}</div>
+                <div class="stat-label">Doanh thu</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.completed}</div>
+                <div class="stat-label">Hoàn thành</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${stats.pending}</div>
+                <div class="stat-label">Chưa xử lý</div>
+            </div>
+        `;
+
+        // Display orders
+        const orders = data.orders;
+        if (orders.length === 0) {
+            document.getElementById('ordersTable').innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-secondary);">Chưa có đơn hàng nào</p>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Tên khách hàng</th>
+                        <th>SĐT</th>
+                        <th>Cấu hình</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày đặt</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        orders.forEach(order => {
+            const statusClass = order.status;
+            const createdAt = new Date(order.created_at).toLocaleDateString('vi-VN');
+
+            html += `
+                <tr>
+                    <td><strong>#${order.id}</strong></td>
+                    <td>${order.name}</td>
+                    <td>${order.phone}</td>
+                    <td><strong>${order.config}</strong></td>
+                    <td>${formatVND(order.price || 0)}</td>
+                    <td><span class="status ${statusClass}">${getStatusLabel(order.status)}</span></td>
+                    <td>${createdAt}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn btn-edit" onclick="editOrder(${order.id}, '${order.status}', ${order.price || 0})">✏️ Sửa</button>
+                            <button class="action-btn btn-delete" onclick="deleteOrder(${order.id})">🗑️ Xóa</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        document.getElementById('ordersTable').innerHTML = html;
+
+    } catch (error) {
+        showMessage('Lỗi kết nối: ' + error.message, 'error');
+        console.error(error);
+    }
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'new': 'Mới',
+        'processing': 'Đang xử lý',
+        'done': 'Hoàn thành',
+        'cancelled': 'Hủy'
+    };
+    return labels[status] || status;
+}
+
+function editOrder(orderId, status, price) {
+    currentOrderId = orderId;
+    currentImageData = null;
+    document.getElementById('editStatus').value = status;
+    document.getElementById('editPrice').value = price;
+    document.getElementById('editImage').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('editModal').classList.add('show');
+}
+
+function previewImage() {
+    const file = document.getElementById('editImage').files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        currentImageData = e.target.result;
+        document.getElementById('previewImg').src = currentImageData;
+        document.getElementById('imagePreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+async function saveOrder() {
+    const status = document.getElementById('editStatus').value;
+    const price = parseFloat(document.getElementById('editPrice').value);
+    const imageData = currentImageData;
+
+    try {
+        const body = { status, price };
+        if (imageData) {
+            body.image_data = imageData;
+        }
+
+        const response = await fetch(`${API_URL}/order/${currentOrderId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('Lỗi: ' + (data.error || 'Không thể cập nhật'), 'error');
+            return;
+        }
+
+        showMessage('✅ Cập nhật thành công');
+        closeModal();
+        loadOrders();
+
+    } catch (error) {
+        showMessage('Lỗi kết nối', 'error');
+    }
+}
+
+async function deleteOrder(orderId) {
+    if (!confirm('Bạn chắc chắn muốn xóa đơn hàng này?')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/order/${orderId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            showMessage('Lỗi xóa đơn hàng', 'error');
+            return;
+        }
+
+        showMessage('✅ Xóa thành công');
+        loadOrders();
+
+    } catch (error) {
+        showMessage('Lỗi kết nối', 'error');
+    }
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('show');
+    currentOrderId = null;
+}
+
+function showPricingTool() {
+    document.getElementById('productsSection').style.display = 'none';
+    document.getElementById('ordersSection').style.display = 'none';
+    document.getElementById('pricingSection').style.display = 'block';
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+    document.querySelectorAll('.sidebar-menu a')[2].classList.add('active');
+}
+
+async function calculatePrice() {
+    const numCells = parseInt(document.getElementById('numCells').value);
+    const cellPrice = parseFloat(document.getElementById('cellPrice').value);
+    const bmsPrice = parseFloat(document.getElementById('bmsPrice').value);
+    const extraCost = parseFloat(document.getElementById('extraCost').value);
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/calculate-price', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                total_cells: numCells,
+                cell_price: cellPrice,
+                bms_price: bmsPrice,
+                extra_cost: extraCost
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('Lỗi tính giá', 'error');
+            return;
+        }
+
+        // Display results
+        document.getElementById('priceMatCost').textContent = formatVND(data.material_cost);
+        document.getElementById('priceTotalCost').textContent = formatVND(data.total_cost);
+        document.getElementById('priceLow').textContent = formatVND(data.price_low);
+        document.getElementById('priceMid').textContent = formatVND(data.price_mid);
+        document.getElementById('priceHigh').textContent = formatVND(data.price_high);
+        document.getElementById('profitLow').textContent = formatVND(data.margin_low);
+        document.getElementById('profitHigh').textContent = formatVND(data.margin_high);
+
+        document.getElementById('priceResult').style.display = 'block';
+
+    } catch (error) {
+        showMessage('Lỗi kết nối', 'error');
+    }
+}
+
+// Load products on page load
+document.addEventListener('DOMContentLoaded', loadProducts);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2869 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vua Pin - Giải pháp pin lithium tối ưu cho mọi nhu cầu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --primary-light: #14b8a6;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #f9fafb;
+            --bg-card: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--primary);
+            border-bottom: none;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 0;
+            background: var(--primary);
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .mobile-menu.show {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 0;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu a:hover {
+            color: white;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* CART MODAL */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            flex-direction: column;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .cart-modal.show {
+            display: flex;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+        }
+
+        .cart-header h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .cart-close:hover {
+            transform: rotate(90deg);
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: var(--bg-dark);
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .cart-item-config {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .cart-item-quantity button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 2px solid var(--border);
+            background: var(--bg-dark);
+        }
+
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .cart-summary-value {
+            color: var(--accent);
+            font-size: 20px;
+        }
+
+        .cart-checkout-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+        }
+
+        .cart-checkout-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 58, 95, 0.3);
+        }
+
+        .cart-checkout-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* CART OVERLAY */
+        .cart-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+        }
+
+        .cart-overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .cart-modal {
+                max-width: 100%;
+            }
+        }
+
+        /* STICKY CHAT BUTTON */
+        .sticky-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+        }
+
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 48px rgba(16, 185, 129, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 120px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, rgba(30, 58, 95, 0.03) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(30, 58, 95, 0.08), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.05), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--primary);
+            animation: fadeInUp 0.8s ease 0.2s both;
+            letter-spacing: -1px;
+        }
+
+        .hero .slogan {
+            font-size: 20px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            font-weight: 600;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* SECTION TITLES */
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0px;
+            line-height: 1.5;
+        }
+
+        /* PRODUCTS SHOWCASE */
+        .products-showcase {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(14, 165, 233, 0.05));
+        }
+
+        #productSearch {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        #productSearch:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1), 0 2px 8px rgba(0, 0, 0, 0.08);
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        #productSearch::placeholder {
+            color: var(--text-light);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            margin-top: 40px;
+        }
+
+        .product-item {
+            background: white;
+            padding: 32px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .product-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 14px 14px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.15);
+            border-color: var(--primary-light);
+        }
+
+        .product-item:hover::before {
+            opacity: 1;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-item h3 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .product-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .price-tag {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        /* FEATURES GRID */
+        .features {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(16, 185, 129, 0.05));
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(15, 118, 110, 0.06), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-light);
+            box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* TRUST SECTION */
+        .trust {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(16, 185, 129, 0.1));
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            animation: slideInUp 0.8s ease 0.3s both;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* CALCULATOR SECTION */
+        .calculator {
+            padding: 80px 20px;
+        }
+
+        .calc-wrapper {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(30, 58, 95, 0.1);
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .calc-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: white;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            font-weight: 400;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .calc-results {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .calc-results.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .config-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(30, 58, 95, 0.25);
+            letter-spacing: 1px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Courier New', monospace;
+        }
+
+        .warnings {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px;
+            display: none;
+        }
+
+        .warnings.show {
+            display: block;
+        }
+
+        .warning-item {
+            color: #fcd34d;
+            font-size: 12px;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .calc-button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+        }
+
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 58, 95, 0.3);
+        }
+
+        .calc-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--primary);
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+            font-size: 13px;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            color: #bbf7d0;
+        }
+
+        /* ORDER SECTION */
+        .order {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(16, 185, 129, 0.05));
+        }
+
+        .order-box {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 58, 0.9) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 48px;
+            max-width: 520px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.2);
+        }
+
+        .order-box h2 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .order-subtitle {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .payment-methods {
+            margin-bottom: 24px;
+        }
+
+        .payment-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .payment-option {
+            position: relative;
+        }
+
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .payment-option label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: white;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .payment-option input[type="radio"]:checked + label {
+            border-color: var(--accent);
+            background: rgba(220, 38, 38, 0.05);
+            color: var(--primary);
+        }
+
+        .payment-option label::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            transition: all 0.25s;
+        }
+
+        .payment-option input[type="radio"]:checked + label::before {
+            border-color: var(--accent);
+            background: var(--accent);
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        .bank-details {
+            display: none;
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.05), rgba(220, 38, 38, 0.05));
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .bank-details.show {
+            display: block;
+        }
+
+        .bank-details h4 {
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .bank-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .bank-info strong {
+            color: var(--primary);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .order-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .order-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 118, 110, 0.4);
+        }
+
+        .order-button:active {
+            transform: translateY(0);
+        }
+
+        .urgency {
+            text-align: center;
+            color: #f59e0b;
+            font-size: 13px;
+            margin-top: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(14, 165, 233, 0.05));
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 32px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+            border-color: var(--primary-light);
+        }
+
+        .testimonial-card:hover::before {
+            opacity: 1;
+        }
+
+        .stars {
+            font-size: 18px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .testimonial-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-style: italic;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .author {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ARTICLES */
+        .articles {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(16, 185, 129, 0.05));
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .article-card {
+            background: white;
+            padding: 32px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: all 0.35s cubic-bezier(0.2, 0.8, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(30, 58, 95, 0.08), transparent);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(30, 58, 95, 0.1);
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        .article-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .article-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .article-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+
+        .article-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .article-link:hover {
+            color: var(--primary);
+            transform: translateX(6px);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+        }
+
+        .modal-close:hover {
+            color: var(--primary);
+        }
+
+        #articleTitle {
+            color: var(--primary);
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+
+        #articleBody {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        #articleBody h3 {
+            color: var(--primary);
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        #articleBody ul, #articleBody ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        #articleBody li {
+            margin-bottom: 8px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .modal-content {
+                padding: 20px;
+                max-height: 90vh;
+            }
+
+            .modal-close {
+                right: 15px;
+                top: 15px;
+            }
+        }
+
+        /* WARRANTY SECTION */
+        .warranty-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.05), rgba(15, 118, 110, 0.05));
+        }
+
+        .warranty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .warranty-card {
+            background: var(--bg-card);
+            padding: 28px 24px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .warranty-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .warranty-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .warranty-card h3 {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .warranty-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .warranty-card ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .warranty-card li {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin: 6px 0;
+        }
+
+        .warranty-card ol {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .warranty-card ol li {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin: 8px 0;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero .slogan {
+                font-size: 18px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .calc-wrapper {
+                padding: 24px;
+            }
+
+            .config-box {
+                font-size: 24px;
+            }
+
+            .stat-number {
+                font-size: 36px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-modal {
+                max-width: 100%;
+            }
+
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+
+            .order-box {
+                padding: 24px;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .products-showcase,
+            .features,
+            .trust,
+            .calculator,
+            .order,
+            .testimonials,
+            .articles {
+                padding: 60px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero .slogan {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .product-item {
+                padding: 20px;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calc-wrapper {
+                padding: 16px;
+                max-width: 100%;
+            }
+
+            .order-box {
+                padding: 16px;
+                max-width: 100%;
+            }
+
+            .warranty-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .warranty-section {
+                padding: 40px 20px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            input,
+            select {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .cart-item {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- STICKY CHAT -->
+<div class="sticky-chat">
+    <a href="https://zalo.me/0814830562" target="_blank" class="chat-button" title="Chat Zalo">
+        <span style="font-size: 20px;">💬</span>
+    </a>
+</div>
+
+<!-- HEADER -->
+<header>
+    <div class="header-content">
+        <a href="#" class="logo">⚡ Vua Pin</a>
+        <nav class="nav-links">
+            <a href="#features">Sản phẩm</a>
+            <a href="#calculator">Tính toán</a>
+            <a href="#order">Đặt hàng</a>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒
+                <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+            </div>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#features" onclick="toggleMobileMenu()">Sản phẩm</a>
+        <a href="#calculator" onclick="toggleMobileMenu()">Tính toán</a>
+        <a href="#order" onclick="toggleMobileMenu()">Đặt hàng</a>
+    </div>
+</header>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+<!-- CART MODAL -->
+<div class="cart-modal" id="cartModal">
+    <div class="cart-header">
+        <h2>Giỏ hàng</h2>
+        <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <div class="cart-empty">Giỏ hàng trống</div>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-summary">
+            <span>Tổng cộng:</span>
+            <span class="cart-summary-value" id="cartTotal">0 VNĐ</span>
+        </div>
+        <button class="cart-checkout-btn" id="cartCheckoutBtn" onclick="checkoutCart()" disabled>
+            Thanh toán
+        </button>
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Vua Pin</h1>
+    <div class="slogan">Giải pháp pin lithium tối ưu cho mọi nhu cầu</div>
+    <p>Thiết kế, tính toán, và cung cấp pin lithium chất lượng cao với BMS thông minh và giá tốt nhất thị trường</p>
+    <div class="cta-buttons">
+        <button class="btn btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior: 'smooth'})">
+            Tính cấu hình pin
+        </button>
+        <button class="btn btn-secondary" onclick="openZaloChat()">
+            Chat Zalo
+        </button>
+    </div>
+</section>
+
+<!-- PRODUCTS WITH IMAGES -->
+<section class="products-showcase">
+    <div class="container">
+        <h2 class="section-title">Sản phẩm chính</h2>
+        <p class="section-subtitle">Pin lithium chất lượng cao, giá tốt nhất</p>
+
+        <div style="margin-bottom: 30px;">
+            <input
+                type="text"
+                id="productSearch"
+                placeholder="🔍 Tìm kiếm sản phẩm..."
+                style="
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 2px solid var(--border);
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-family: inherit;
+                    transition: all 0.3s;
+                "
+            />
+        </div>
+
+        <div class="products-grid" id="productsContainer">
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                <div class="spinner" style="width: 30px; height: 30px; border: 3px solid var(--border); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px;"></div>
+                Đang tải sản phẩm...
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">Tại sao chọn Vua Pin?</h2>
+        <p class="section-subtitle">Giải pháp pin lithium cho mọi nhu cầu</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>48V 20Ah (Xe điện)</h3>
+                <p>Cho xe điện, xe máy điện. Dung lượng 960Wh, dòng xả ổn định 100A, giá cạnh tranh.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>60V 30Ah (Tải cao)</h3>
+                <p>Công suất cao cho xe điện tải trọng lớn. Năng lượng 1800Wh, BMS 100A, hiệu suất tối ưu.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>12V 100Ah (Năng lượng)</h3>
+                <p>Pin mặt trời, hệ thống lưu trữ năng lượng. 1200Wh năng lượng, thích hợp ngoài trời.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>Thiết kế tùy chỉnh</h3>
+                <p>Bất kỳ cấu hình nào từ 3S đến 20S, mọi dung lượng. Hỗ trợ tính toán kỹ thuật.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>BMS thông minh</h3>
+                <p>Bảo vệ toàn diện: cân bằng tự động, kiểm soát nhiệt độ, bảo vệ ngắn mạch, quá dòng.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>Hiệu suất cao</h3>
+                <p>Tế bào chất lượng cao, dòng xả lớn, tuổi thọ 2000+ chu kỳ. Bảo hành 24 tháng.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+    <div class="container">
+        <h2 class="section-title">Khách hàng tin tưởng chúng tôi</h2>
+        <p class="section-subtitle">Số liệu từ 100+ đơn hàng thành công</p>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Bộ pin hoàn thành</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Khách hàng hài lòng</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24 tháng</div>
+                <div class="stat-label">Bảo hành toàn bộ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Hỗ trợ kỹ thuật</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+    <div class="container">
+        <h2 class="section-title">Nhận xét từ khách hàng</h2>
+        <p class="section-subtitle">Những câu chuyện thành công từ người dùng thực</p>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"Pin chất lượng tốt, giao hàng nhanh, giá hợp lý. Rất hài lòng với dịch vụ của Vua Pin!"</p>
+                <div class="author">- Trần Minh Đức, Hà Nội</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"Xe điện của tôi chạy quá tốt với pin này. Dùng được 3 năm chưa hỏng, bảo hành rất uy tín."</p>
+                <div class="author">- Nguyễn Văn A, TP HCM</div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"Tính toán pin rất chính xác, không sai lệch. Tư vấn kỹ thuật tận tình. Sẽ mua lại lần tới!"</p>
+                <div class="author">- Phạm Thị Hương, Đà Nẵng</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ARTICLES -->
+<section class="articles">
+    <div class="container">
+        <h2 class="section-title">Bài viết hữu ích</h2>
+        <p class="section-subtitle">Hướng dẫn và mẹo từ chuyên gia</p>
+
+        <div class="articles-grid">
+            <div class="article-card">
+                <h3>Cách chọn pin lithium phù hợp</h3>
+                <p>Hướng dẫn chi tiết về cách tính cấu hình pin, chọn loại tế bào, và BMS phù hợp với nhu cầu của bạn.</p>
+                <a href="#" class="article-link" data-article="0">Đọc thêm →</a>
+            </div>
+
+            <div class="article-card">
+                <h3>Bảo dưỡng pin lithium đúng cách</h3>
+                <p>Những bí kíp giúp pin của bạn có tuổi thọ dài hơn 5 năm. Cách sạc, bảo quản, và kiểm tra pin an toàn.</p>
+                <a href="#" class="article-link" data-article="1">Đọc thêm →</a>
+            </div>
+
+            <div class="article-card">
+                <h3>So sánh pin lithium vs pin chì-axit</h3>
+                <p>Phân tích chi tiết sự khác biệt, ưu và nhược điểm, giúp bạn quyết định chọn loại pin nào tốt nhất.</p>
+                <a href="#" class="article-link" data-article="2">Đọc thêm →</a>
+            </div>
+        </div>
+
+        <!-- ARTICLE MODAL -->
+        <div id="articleModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <h2 id="articleTitle"></h2>
+                <div id="articleBody"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="calculator" id="calculator">
+    <div class="container">
+        <h2 class="section-title">Tính cấu hình pin</h2>
+        <p class="section-subtitle">Công cụ thiết kế pin lithium chuyên nghiệp - Tính toán chính xác</p>
+
+        <div class="calc-wrapper">
+            <div id="calcError" class="message error"></div>
+
+            <div class="calc-grid">
+                <!-- INPUTS -->
+                <div class="calc-inputs">
+                    <div class="input-group">
+                        <label>Loại tế bào</label>
+                        <select id="cellType">
+                            <option value="cheap">Loại rẻ (5A max)</option>
+                            <option value="standard" selected>Standard 18650 (10A max)</option>
+                            <option value="high_drain">High Drain (20A max)</option>
+                            <option value="premium">Premium (30A max)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Điện áp tế bào (V)</label>
+                        <input id="vCell" type="number" value="3.7" step="0.1" min="2" max="5">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Dung lượng tế bào (Ah)</label>
+                        <input id="ahCell" type="number" value="3" step="0.1" min="0.1">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Điện áp mục tiêu (V)</label>
+                        <input id="targetVoltage" type="number" value="48" step="1" min="3">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Số cell nối song song (P)</label>
+                        <input id="parallel" type="number" value="10" step="1" min="1">
+                    </div>
+
+                    <button class="calc-button" onclick="calculate()">⚡ Tính toán</button>
+
+                    <div id="loading" class="loading">
+                        <span class="spinner"></span>Đang tính...
+                    </div>
+                </div>
+
+                <!-- RESULTS -->
+                <div id="results" class="calc-results">
+                    <div class="config-box" id="configBox">13S10P</div>
+
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-label">Điện áp</div>
+                            <div class="result-value" id="resVoltage">48V</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Dung lượng</div>
+                            <div class="result-value" id="resCapacity">30Ah</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Năng lượng</div>
+                            <div class="result-value" id="resEnergy">1443Wh</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">BMS</div>
+                            <div class="result-value" id="resBMS">120A</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 13px; color: var(--text-secondary); padding: 12px; background: var(--bg-dark); border-radius: 6px;">
+                        <strong>Max:</strong> <span id="resMaxV" style="color: var(--accent);">54.6V</span> |
+                        <strong>Min:</strong> <span id="resMinV" style="color: var(--accent);">32.5V</span> |
+                        <strong>Dòng:</strong> <span id="resMaxCurrent" style="color: var(--accent);">100A</span> |
+                        <strong>Cells:</strong> <span id="resTotalCells" style="color: var(--accent);">130</span>
+                    </div>
+
+                    <div id="warnings" class="warnings"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ORDER -->
+<section class="order" id="order">
+    <div class="container">
+        <div class="order-box">
+            <h2>🛒 Đặt hàng ngay</h2>
+            <p class="order-subtitle">Giao hàng trong 7 ngày làm việc</p>
+
+            <div id="orderError" class="message error"></div>
+            <div id="orderSuccess" class="message success"></div>
+
+            <div class="payment-methods">
+                <span class="payment-label">Hình thức thanh toán *</span>
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <input type="radio" id="bank_transfer" name="payment" value="bank_transfer" onchange="toggleBankDetails()">
+                        <label for="bank_transfer">🏦 Chuyển khoản</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="cod" name="payment" value="cod" onchange="toggleBankDetails()" checked>
+                        <label for="cod">📦 COD</label>
+                    </div>
+                </div>
+
+                <div id="bankDetails" class="bank-details">
+                    <h4>🏦 Thông tin chuyển khoản</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <div class="bank-info">
+                                <strong>Ngân hàng:</strong> Vietinbank <br>
+                                <strong>Chủ tài khoản:</strong> Nguyễn Thế Thái <br>
+                                <strong>Số tài khoản:</strong> 107885081042 <br>
+                                <strong>Nội dung:</strong> [Tên] - [Số ĐT]
+                            </div>
+                            <button type="button" class="copy-btn" onclick="copyBankInfo()" style="width: 100%; margin-top: 8px;">📋 Copy thông tin</button>
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <div id="qrCode" style="background: white; padding: 8px; border-radius: 6px; border: 1px solid var(--border);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Tên của bạn *</label>
+                    <input id="name" type="text" placeholder="Nguyễn Văn A" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Số điện thoại *</label>
+                    <input id="phone" type="tel" placeholder="0901234567" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Email *</label>
+                    <input id="email" type="email" placeholder="email@example.com" required>
+                </div>
+            </div>
+
+            <div style="background: rgba(30, 58, 95, 0.05); padding: 16px; border-radius: 10px; margin-bottom: 16px; border-left: 3px solid var(--primary);">
+                <h3 style="font-size: 14px; color: var(--primary); margin-bottom: 12px; font-weight: 600;">📍 Địa chỉ giao hàng</h3>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <label>Địa chỉ chi tiết *</label>
+                        <input id="address" type="text" placeholder="VD: 123 Đường Lê Lợi, Tòa nhà A" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label>Quận/Huyện *</label>
+                            <input id="district" type="text" placeholder="VD: Quận 1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label>Tỉnh/Thành phố *</label>
+                            <input id="city" type="text" placeholder="VD: TP HCM" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <label>Ghi chú giao hàng (tùy chọn)</label>
+                        <input id="delivery_note" type="text" placeholder="VD: Giao sáng sớm, chuông cửa bên trái...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Cấu hình pin (auto-fill)</label>
+                    <input id="config" type="text" placeholder="VD: 13S10P" disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group">
+                    <label>Yêu cầu thêm (tùy chọn)</label>
+                    <input id="note" type="text" placeholder="VD: Cấu hình đặc biệt, yêu cầu khác...">
+                </div>
+            </div>
+
+            <button class="order-button" onclick="submitOrder()">🔋 Đặt pin ngay</button>
+
+            <div class="urgency">⏰ Chỉ nhận 5 đơn/ngày - Đặt ngay để đảm bảo</div>
+
+            <div id="orderLoading" class="loading">
+                <span class="spinner"></span>Đang xử lý đơn hàng...
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WARRANTY POLICY -->
+<section class="warranty-section">
+    <div class="container">
+        <h2 class="section-title">🛡️ Chính sách bảo hành</h2>
+        <p class="section-subtitle">Cam kết chất lượng và hỗ trợ khách hàng tối đa</p>
+
+        <div class="warranty-grid">
+            <div class="warranty-card">
+                <div class="warranty-icon">📅</div>
+                <h3>Bảo hành 24 tháng</h3>
+                <p>Tất cả pin lithium được bảo hành 24 tháng từ ngày mua. BMS được bảo hành 36 tháng.</p>
+            </div>
+
+            <div class="warranty-card">
+                <div class="warranty-icon">✅</div>
+                <h3>Điều kiện bảo hành</h3>
+                <ul style="text-align: left; font-size: 14px;">
+                    <li>✓ Lỗi kỹ thuật về pin</li>
+                    <li>✓ Lỗi BMS</li>
+                    <li>✓ Hàn (solder) lỏng</li>
+                    <li>✓ Liên lạc (connector) bị hư</li>
+                </ul>
+            </div>
+
+            <div class="warranty-card">
+                <div class="warranty-icon">❌</div>
+                <h3>Không được bảo hành</h3>
+                <ul style="text-align: left; font-size: 14px;">
+                    <li>✗ Hư hỏng do sử dụng sai</li>
+                    <li>✗ Cháy nổ do tạo ngắn mạch</li>
+                    <li>✗ Để quá lâu không sử dụng</li>
+                    <li>✗ Tự ý mở / sửa chữa</li>
+                </ul>
+            </div>
+
+            <div class="warranty-card">
+                <div class="warranty-icon">📞</div>
+                <h3>Quy trình bảo hành</h3>
+                <ol style="text-align: left; font-size: 14px;">
+                    <li>Liên hệ hotline: 0814830562</li>
+                    <li>Gửi hình ảnh lỗi để xác nhận</li>
+                    <li>Gửi pin về (miễn phí vận chuyển)</li>
+                    <li>Kiểm tra & sửa chữa (3-5 ngày)</li>
+                    <li>Gửi trả lại khách hàng</li>
+                </ol>
+            </div>
+
+            <div class="warranty-card">
+                <div class="warranty-icon">⚡</div>
+                <h3>Hỗ trợ kỹ thuật</h3>
+                <p>Tư vấn miễn phí về:</p>
+                <ul style="text-align: left; font-size: 14px;">
+                    <li>✓ Cách sử dụng đúng</li>
+                    <li>✓ Bảo dưỡng pin</li>
+                    <li>✓ Sạc pin an toàn</li>
+                    <li>✓ Mở rộng hệ thống</li>
+                </ul>
+            </div>
+
+            <div class="warranty-card">
+                <div class="warranty-icon">💚</div>
+                <h3>Cam kết</h3>
+                <p><strong>✓ Chất lượng đã kiểm tra 100%</strong></p>
+                <p><strong>✓ Hỗ trợ 24/7 qua Zalo/Hotline</strong></p>
+                <p><strong>✓ Giao hàng an toàn 100%</strong></p>
+                <p><strong>✓ Hoàn tiền nếu không hài lòng</strong></p>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(15, 118, 110, 0.1), rgba(20, 184, 166, 0.05)); border-left: 4px solid var(--primary); padding: 24px; border-radius: 8px; margin-top: 40px; text-align: center;">
+            <h3 style="color: var(--primary); margin-bottom: 12px;">📋 Giấy tờ bảo hành</h3>
+            <p style="margin-bottom: 16px;">Mỗi sản phẩm đi kèm với:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 0 auto;">
+                <div>✓ Hóa đơn / Chứng thực</div>
+                <div>✓ Hướng dẫn sử dụng</div>
+                <div>✓ Sơ đồ kết nối</div>
+                <div>✓ Phiếu bảo hành</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>© 2024 Vua Pin - Giải pháp pin lithium tối ưu • Bảo hành 24 tháng • Giao hàng toàn quốc</p>
+    <p style="margin-top: 12px;">
+        📍 Địa chỉ: <strong>Thuỵ An, Thái Thuỵ, Thái Bình</strong>
+    </p>
+    <p style="margin-top: 8px;">
+        📞 Hotline: <strong>0814830562</strong> |
+        💬 Zalo: <strong>0814830562</strong>
+    </p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const API_URL = 'http://127.0.0.1:5000/api';
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str ?? '');
+    return div.innerHTML;
+}
+
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e) { cart = []; }
+
+// Format currency
+function formatVND(value) {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(value).replace('₫', 'VNĐ').trim();
+}
+
+// Generate VietQR Code
+function generateVietQR() {
+    const qrContainer = document.getElementById('qrCode');
+    qrContainer.innerHTML = ''; // Clear previous QR
+
+    // VietQR format: https://qr.vietcombank.com.vn/
+    // Simple format: vietinbank|107885081042|Nguyen The Thai|0|
+    const vietqrContent = 'vietinbank|107885081042|Nguyen The Thai|0|';
+
+    new QRCode(qrContainer, {
+        text: vietqrContent,
+        width: 120,
+        height: 120,
+        colorDark: '#1e3a5f',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function openZaloChat() {
+    const zaloNumber = '0814830562';
+    window.open(`https://zalo.me/${zaloNumber}`, '_blank');
+}
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('show');
+}
+
+// CART FUNCTIONS
+function saveCart() {
+    try { localStorage.setItem('cart', JSON.stringify(cart)); } catch(e) {}
+    updateCartUI();
+}
+
+function toggleCart() {
+    document.getElementById('cartModal').classList.toggle('show');
+    document.getElementById('cartOverlay').classList.toggle('show');
+}
+
+function addToCart(name, price, config) {
+    const item = cart.find(item => item.name === name);
+    if (item) {
+        item.quantity++;
+    } else {
+        cart.push({
+            id: Date.now(),
+            name: name,
+            price: parseInt(price),
+            config: config,
+            quantity: 1
+        });
+    }
+    saveCart();
+    showNotification(`✅ Đã thêm ${name} vào giỏ!`);
+}
+
+function removeFromCart(id) {
+    cart = cart.filter(item => item.id !== id);
+    saveCart();
+}
+
+function updateQuantity(id, delta) {
+    const item = cart.find(item => item.id === id);
+    if (item) {
+        item.quantity += delta;
+        if (item.quantity <= 0) {
+            removeFromCart(id);
+        } else {
+            saveCart();
+        }
+    }
+}
+
+function updateCartUI() {
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartBadge = document.getElementById('cartBadge');
+    const cartTotal = document.getElementById('cartTotal');
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
+
+    if (cart.length === 0) {
+        cartItemsEl.innerHTML = '<div class="cart-empty">Giỏ hàng trống</div>';
+        cartBadge.style.display = 'none';
+        cartTotal.textContent = '0 VNĐ';
+        checkoutBtn.disabled = true;
+        return;
+    }
+
+    cartBadge.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartBadge.style.display = 'flex';
+
+    let html = '';
+    let total = 0;
+
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        html += `
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-config">${item.config}</div>
+                    <div class="cart-item-price">${item.price.toLocaleString('vi-VN')} VNĐ</div>
+                </div>
+                <div>
+                    <div class="cart-item-quantity">
+                        <button onclick="updateQuantity(${item.id}, -1)">−</button>
+                        <span style="width: 20px; text-align: center;">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeFromCart(${item.id})">🗑️</button>
+                </div>
+            </div>
+        `;
+    });
+
+    cartItemsEl.innerHTML = html;
+    cartTotal.textContent = total.toLocaleString('vi-VN') + ' VNĐ';
+    checkoutBtn.disabled = false;
+}
+
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.textContent = message;
+    notif.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        padding: 16px 24px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 2001;
+        animation: slideInUp 0.3s ease;
+        font-weight: 600;
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function checkoutCart() {
+    if (cart.length === 0) {
+        showNotification('❌ Giỏ hàng trống!');
+        return;
+    }
+
+    toggleCart();
+    document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+
+    const cartSummary = cart.map(item => `${item.name} x${item.quantity}`).join(', ');
+    document.getElementById('note').value = `Sản phẩm từ giỏ: ${cartSummary}`;
+}
+
+// PAYMENT METHODS
+function toggleBankDetails() {
+    const bankDetails = document.getElementById('bankDetails');
+    const bankTransfer = document.getElementById('bank_transfer');
+    if (bankTransfer.checked) {
+        bankDetails.classList.add('show');
+        if (typeof QRCode !== 'undefined') {
+            generateVietQR();
+        } else {
+            setTimeout(() => generateVietQR(), 500);
+        }
+    } else {
+        bankDetails.classList.remove('show');
+    }
+}
+
+function copyBankInfo() {
+    const text = `Ngân hàng: Vietinbank
+Chủ tài khoản: Nguyễn Thế Thái
+Số tài khoản: 107885081042
+Nội dung: [Tên] - [Số điện thoại]`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('✅ Đã copy thông tin chuyển khoản');
+    }).catch(() => {
+        alert('Không thể copy. Vui lòng copy thủ công.');
+    });
+}
+
+// Initialize cart on page load
+updateCartUI();
+
+function showMessage(elementId, message, type = 'error') {
+    const el = document.getElementById(elementId);
+    el.textContent = message;
+    el.className = `message ${type} show`;
+    setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+async function calculate() {
+    document.getElementById('calcError').classList.remove('show');
+
+    const vCell = parseFloat(document.getElementById('vCell').value);
+    const ahCell = parseFloat(document.getElementById('ahCell').value);
+    const targetVoltage = parseFloat(document.getElementById('targetVoltage').value);
+    const parallel = parseInt(document.getElementById('parallel').value);
+    const cellType = document.getElementById('cellType').value;
+
+    if (!vCell || !ahCell || !targetVoltage || !parallel) {
+        showMessage('calcError', '❌ Vui lòng nhập đầy đủ thông tin');
+        return;
+    }
+
+    document.getElementById('loading').classList.add('show');
+    document.getElementById('results').classList.remove('show');
+
+    try {
+        const response = await fetch(`${API_URL}/calculate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                v_cell: vCell,
+                ah_cell: ahCell,
+                target_voltage: targetVoltage,
+                parallel: parallel,
+                cell_type: cellType
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('calcError', '❌ ' + (data.error || 'Lỗi tính toán'));
+            return;
+        }
+
+        // Display results
+        document.getElementById('configBox').textContent = data.config;
+        document.getElementById('resVoltage').textContent = data.voltage + 'V';
+        document.getElementById('resCapacity').textContent = data.capacity + 'Ah';
+        document.getElementById('resEnergy').textContent = data.energy + 'Wh';
+        document.getElementById('resBMS').textContent = data.bms_rating + 'A';
+        document.getElementById('resMaxV').textContent = data.max_voltage + 'V';
+        document.getElementById('resMinV').textContent = data.min_voltage + 'V';
+        document.getElementById('resMaxCurrent').textContent = data.pack_max_current + 'A';
+        document.getElementById('resTotalCells').textContent = data.total_cells;
+
+        // Show warnings
+        const warningsEl = document.getElementById('warnings');
+        if (data.warnings.length > 0) {
+            warningsEl.innerHTML = data.warnings.map(w => {
+                const div = document.createElement('div');
+                div.className = 'warning-item';
+                div.textContent = w;
+                return div.outerHTML;
+            }).join('');
+            warningsEl.classList.add('show');
+        } else {
+            warningsEl.classList.remove('show');
+        }
+
+        // Auto-fill order form
+        document.getElementById('config').value = data.config;
+        document.getElementById('results').classList.add('show');
+
+    } catch (error) {
+        showMessage('calcError', '❌ Lỗi kết nối server');
+        console.error('Error:', error);
+    } finally {
+        document.getElementById('loading').classList.remove('show');
+    }
+}
+
+async function submitOrder() {
+    document.getElementById('orderError').classList.remove('show');
+    document.getElementById('orderSuccess').classList.remove('show');
+
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const district = document.getElementById('district').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const delivery_note = document.getElementById('delivery_note').value.trim();
+    const config = document.getElementById('config').value.trim();
+    const note = document.getElementById('note').value.trim();
+    const payment = document.querySelector('input[name="payment"]:checked')?.value || '';
+
+    if (!name || !phone || !email) {
+        showMessage('orderError', '❌ Vui lòng nhập tên, số điện thoại và email');
+        return;
+    }
+
+    if (name.length < 2) {
+        showMessage('orderError', '❌ Tên phải có ít nhất 2 ký tự');
+        return;
+    }
+
+    if (phone.length < 10) {
+        showMessage('orderError', '❌ Số điện thoại không hợp lệ');
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(email)) {
+        showMessage('orderError', '❌ Email không hợp lệ');
+        return;
+    }
+
+    if (!address || !district || !city) {
+        showMessage('orderError', '❌ Vui lòng nhập đầy đủ địa chỉ giao hàng');
+        return;
+    }
+
+    if (!payment) {
+        showMessage('orderError', '❌ Vui lòng chọn hình thức thanh toán');
+        return;
+    }
+
+    document.getElementById('orderLoading').classList.add('show');
+
+    try {
+        const response = await fetch(`${API_URL}/order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                phone: phone,
+                email: email,
+                address: address,
+                district: district,
+                city: city,
+                delivery_note: delivery_note,
+                config: config,
+                note: note,
+                payment: payment,
+                price: 0
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage('orderError', '❌ ' + (data.error || 'Lỗi đặt hàng'));
+            return;
+        }
+
+        showMessage('orderSuccess', `✅ Đặt hàng thành công! Mã đơn: #${data.order_id}. Chúng tôi sẽ gọi lại ngay!`, 'success');
+
+        // Reset form
+        document.getElementById('name').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('note').value = '';
+
+        // Scroll to thank you
+        setTimeout(() => {
+            alert('Cảm ơn bạn! Chúng tôi sẽ liên hệ ngay để xác nhận đơn hàng.');
+            openZaloChat();
+        }, 2000);
+
+    } catch (error) {
+        showMessage('orderError', '❌ Lỗi kết nối server');
+        console.error('Error:', error);
+    } finally {
+        document.getElementById('orderLoading').classList.remove('show');
+    }
+}
+
+// Allow Enter to submit
+document.getElementById('parallel')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') calculate();
+});
+
+document.getElementById('note')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') submitOrder();
+});
+
+// ARTICLES CONTENT
+const articles = [
+    {
+        title: 'Cách chọn pin lithium phù hợp',
+        content: `
+            <h3>Tổng quan</h3>
+            <p>Chọn pin lithium đúng cách là yếu tố quan trọng quyết định hiệu suất và tuổi thọ của thiết bị. Bài viết này sẽ hướng dẫn bạn từng bước.</p>
+
+            <h3>1. Xác định nhu cầu</h3>
+            <ul>
+                <li><strong>Điện áp cần thiết (V):</strong> Xác định xem bạn cần 12V, 24V, 48V hay cao hơn</li>
+                <li><strong>Dung lượng (Ah):</strong> Xác định thời gian hoạt động cần thiết</li>
+                <li><strong>Công suất (W):</strong> Tính toán dòng xả tối đa cần thiết</li>
+            </ul>
+
+            <h3>2. Chọn loại tế bào</h3>
+            <ul>
+                <li><strong>18650:</strong> Phổ biến, giá rẻ, dòng xả 10A</li>
+                <li><strong>21700:</strong> Dung lượng cao hơn, dòng xả tốt hơn</li>
+                <li><strong>32700/38140:</strong> Dung lượng lớn, tốt cho năng lượng cao</li>
+            </ul>
+
+            <h3>3. Tính toán cấu hình</h3>
+            <p>Sử dụng công thức: S = Điện áp mong muốn ÷ Điện áp tế bào (thường 3.7V)</p>
+            <p>Sử dụng máy tính Vua Pin để tính toán chính xác cấu hình optimal cho nhu cầu của bạn.</p>
+
+            <h3>4. Chọn BMS phù hợp</h3>
+            <p>BMS (Battery Management System) là yếu tố quan trọng:</p>
+            <ul>
+                <li>Đặc tính dòng: Phải lớn hơn dòng xả tối đa 20%</li>
+                <li>Tính năng: Cân bằng tế bào, bảo vệ quá tải, quá dòng</li>
+            </ul>
+        `
+    },
+    {
+        title: 'Bảo dưỡng pin lithium đúng cách',
+        content: `
+            <h3>Khái quát</h3>
+            <p>Pin lithium có tuổi thọ dài nhưng cần bảo dưỡng đúng cách để đạt tối đa 5-10 năm sử dụng.</p>
+
+            <h3>1. Cách sạc pin đúng</h3>
+            <ul>
+                <li><strong>Sạc khi còn 20%:</strong> Không nên để pin hoàn toàn xả</li>
+                <li><strong>Sạc đến 80%:</strong> Tránh sạc 100% liên tục</li>
+                <li><strong>Dòng sạc:</strong> Sạc với dòng C/10 để bảo vệ pin</li>
+                <li><strong>Tránh quá nóng:</strong> Sạc ở nhiệt độ 15-25°C</li>
+            </ul>
+
+            <h3>2. Bảo quản pin</h3>
+            <ul>
+                <li><strong>Nhiệt độ:</strong> Lưu trữ ở 15-25°C, tránh nắng trực tiếp</li>
+                <li><strong>Độ ẩm:</strong> Nơi khô ráo, tránh nơi ẩm ướt</li>
+                <li><strong>Vị trí:</strong> Nơi thoáng mát, không bị áp lực</li>
+                <li><strong>Kiểm tra định kỳ:</strong> Kiểm tra mỗi 3 tháng một lần</li>
+            </ul>
+
+            <h3>3. Kiểm tra định kỳ</h3>
+            <ul>
+                <li>Kiểm tra điện áp của từng tế bào</li>
+                <li>Cân bằng tế bào nếu cần (chênh lệch > 0.1V)</li>
+                <li>Kiểm tra BMS hoạt động bình thường</li>
+                <li>Làm sạch các tiếp điểm</li>
+            </ul>
+
+            <h3>4. Dấu hiệu pin hỏng</h3>
+            <ul>
+                <li>Pin không sạc được hoặc sạc rất chậm</li>
+                <li>Pin xả nhanh bất thường</li>
+                <li>Lồng lên hoặc biến dạng</li>
+                <li>BMS báo lỗi liên tục</li>
+            </ul>
+        `
+    },
+    {
+        title: 'So sánh pin lithium vs pin chì-axit',
+        content: `
+            <h3>Sơ lược so sánh</h3>
+            <p>Pin lithium và pin chì-axit là hai công nghệ phổ biến nhất hiện nay. Hãy xem so sánh chi tiết dưới đây.</p>
+
+            <h3>Năng lượng riêng</h3>
+            <ul>
+                <li><strong>Pin lithium:</strong> 150-250 Wh/kg - đứng đầu về năng lượng riêng</li>
+                <li><strong>Pin chì-axit:</strong> 40-50 Wh/kg - thấp hơn nhiều</li>
+            </ul>
+
+            <h3>Tuổi thọ</h3>
+            <ul>
+                <li><strong>Pin lithium:</strong> 300-1000 chu kỳ (5-10 năm)</li>
+                <li><strong>Pin chì-axit:</strong> 200-300 chu kỳ (3-5 năm)</li>
+            </ul>
+
+            <h3>Giá thành</h3>
+            <ul>
+                <li><strong>Pin lithium:</strong> Giá cao hơn 5-10 lần nhưng lâu dài tiết kiệm</li>
+                <li><strong>Pin chì-axit:</strong> Giá rẻ nhưng cần thay thế thường xuyên</li>
+            </ul>
+
+            <h3>Ưu điểm Pin Lithium</h3>
+            <ul>
+                <li>✅ Nhẹ và nhỏ gọn</li>
+                <li>✅ Tuổi thọ dài</li>
+                <li>✅ Hiệu suất sạc cao</li>
+                <li>✅ Không cần bảo dưỡng nhiều</li>
+                <li>✅ Hiệu suất ở nhiệt độ thấp tốt hơn</li>
+            </ul>
+
+            <h3>Nhược điểm Pin Lithium</h3>
+            <ul>
+                <li>❌ Giá thành cao</li>
+                <li>❌ Cần BMS phức tạp</li>
+                <li>❌ Nhạy cảm với nhiệt độ cao</li>
+            </ul>
+
+            <h3>Kết luận</h3>
+            <p>Với các ứng dụng yêu cầu tính di động cao và tuổi thọ dài, pin lithium là lựa chọn tối ưu. Pin chì-axit vẫn phù hợp cho các ứng dụng tĩnh, công suất thấp.</p>
+        `
+    }
+];
+
+// Article Modal Handlers
+function openArticle(articleIndex) {
+    const article = articles[articleIndex];
+    if (!article) return;
+
+    document.getElementById('articleTitle').textContent = article.title;
+    document.getElementById('articleBody').innerHTML = article.content;
+    document.getElementById('articleModal').classList.add('show');
+}
+
+function closeArticle() {
+    document.getElementById('articleModal').classList.remove('show');
+}
+
+// Event Listeners for Articles
+document.querySelectorAll('.article-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const articleIndex = parseInt(link.dataset.article);
+        openArticle(articleIndex);
+    });
+});
+
+// Close modal when clicking X
+document.querySelector('.modal-close').addEventListener('click', closeArticle);
+
+// Close modal when clicking outside
+document.getElementById('articleModal').addEventListener('click', (e) => {
+    if (e.target.id === 'articleModal') {
+        closeArticle();
+    }
+});
+
+// Store all products for search filtering
+let allProducts = [];
+
+// RENDER PRODUCTS
+function renderProducts(products) {
+    if (!products || products.length === 0) {
+        document.getElementById('productsContainer').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">Không có sản phẩm nào</p>';
+        return;
+    }
+
+    let html = '';
+    products.forEach(product => {
+        const imageUrl = product.image_url || '';
+        const safeAlt = escapeHtml(product.name);
+        const imageHTML = imageUrl
+            ? `<img src="${escapeHtml(imageUrl)}" alt="${safeAlt}" onerror="this.parentElement.textContent='🔋'">`
+            : '🔋';
+
+        html += `
+            <div class="product-item">
+                <div class="product-image">
+                    ${imageHTML}
+                </div>
+                <h3>${escapeHtml(product.name)}</h3>
+                <p>${escapeHtml(product.description)}</p>
+                <div class="price-tag">${formatVND(product.price)}</div>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 8px;"
+                    data-name="${escapeHtml(product.name)}" data-price="${product.price}" data-config="${escapeHtml(product.config)}"
+                    onclick="addToCart(this.dataset.name, this.dataset.price, this.dataset.config)">
+                    🛒 Thêm vào giỏ
+                </button>
+                <button class="btn btn-secondary" style="width: 100%; background: white; color: var(--primary); border: 2px solid var(--primary);" onclick="openZaloChat()">
+                    💬 Chat Zalo
+                </button>
+            </div>
+        `;
+    });
+
+    document.getElementById('productsContainer').innerHTML = html;
+}
+
+// FILTER PRODUCTS
+function filterProducts(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+
+    if (!term) {
+        renderProducts(allProducts);
+        return;
+    }
+
+    const filtered = allProducts.filter(product =>
+        product.name.toLowerCase().includes(term) ||
+        product.description.toLowerCase().includes(term) ||
+        product.config.toLowerCase().includes(term)
+    );
+
+    renderProducts(filtered);
+}
+
+// LOAD PRODUCTS
+async function loadProducts() {
+    try {
+        const response = await fetch(`${API_URL}/admin/products`);
+        const data = await response.json();
+
+        if (!data.products) {
+            renderProducts([]);
+            return;
+        }
+
+        allProducts = data.products;
+        renderProducts(allProducts);
+    } catch (error) {
+        document.getElementById('productsContainer').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--error); padding: 40px;">Lỗi tải sản phẩm</p>';
+    }
+}
+
+// Load products on page load
+window.addEventListener('DOMContentLoaded', () => {
+    loadProducts();
+
+    // Add search input listener
+    const searchInput = document.getElementById('productSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterProducts(e.target.value);
+        });
+    }
+});
+</script>
+
+</body>
+</html>
